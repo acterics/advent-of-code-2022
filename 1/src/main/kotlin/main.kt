@@ -7,21 +7,25 @@ fun main(args: Array<String>) {
     if (!inputFile.isFile) {
         throw IllegalStateException("input.txt not found")
     }
-    val elvesCalories: MutableList<List<Int>> = mutableListOf()
-    var elfCalories: MutableList<Int> = mutableListOf()
+    val elvesCalories: MutableList<Int> = mutableListOf()
+    var elfCalories = 0
     inputFile.forEachLine { line ->
         if (line.isBlank()) {
-            if (elfCalories.isNotEmpty()) {
-                elvesCalories.add(elfCalories)
-                elfCalories = mutableListOf()
-            }
+            elvesCalories.add(elfCalories)
+            elfCalories = 0
             return@forEachLine
         }
         val caloriesItem = line.toIntOrNull() ?: return@forEachLine
-        elfCalories.add(caloriesItem)
+        elfCalories += caloriesItem
     }
-    val maxCalories = elvesCalories.maxOfOrNull { it.sum() }
-        ?: throw IllegalStateException("invalid input.txt")
+    elvesCalories.add(elfCalories)
 
-    println(maxCalories)
+    val topElvesSum = elvesCalories
+        .sortedDescending()
+        .asSequence()
+        .take(3)
+        .sum()
+
+    println(topElvesSum)
+
 }
