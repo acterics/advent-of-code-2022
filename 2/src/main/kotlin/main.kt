@@ -7,31 +7,89 @@ const val SCORE_LOSE = 0
 const val SCORE_DRAW = 3
 const val SCORE_WIN = 6
 
-fun main(args: Array<String>) {
-    val inputFile = File("./input.txt")
-    val totalScore = calculateTotalScore(inputFile.readText())
-    println("totalScore: $totalScore")
-}
-
 enum class Shape {
     Rock,
     Paper,
     Scissors;
 }
+fun main(args: Array<String>) {
+    val inputFile = File("./input.txt")
+    val totalScore = calculateSecondStratTotalScore(inputFile.readText())
+    println("totalScore: $totalScore")
+}
 
-fun calculateTotalScore(input: String): Int = parseInput(input)
-    .fold(0) { acc, pair -> acc + calculateTotalRoundScore(pair.first, pair.second) }
+/**
+ * First strategy
+ */
+fun calculateFirstStratTotalScore(input: String): Int = parseFirstStratInput(input)
+    .fold(0) { acc, pair -> acc + calculateFirstStratTotalRoundScore(pair.first, pair.second) }
 
-fun calculateTotalRoundScore(opponent: Shape, player: Shape): Int =
+fun calculateFirstStratTotalRoundScore(opponent: Shape, player: Shape): Int =
     calculateRoundResultScore(opponent, player) + getPlayerShapeScore(player)
 
-fun calculateRoundResultScore(opponent: Shape, player: Shape): Int {
-    val roundResult = compareShapes(player, opponent)
-    return when {
-        roundResult > 0 -> SCORE_WIN
-        roundResult < 0 -> SCORE_LOSE
-        else -> SCORE_DRAW
+fun parseFirstStratLine(line: String): Pair<Shape, Shape> = line.split(" ")
+    .let { parts ->
+        require(parts.size == 2)
+        decodeOpponentShape(parts[0]) to decodePlayerShape(parts[1])
     }
+
+fun parseFirstStratInput(input: String): List<Pair<Shape, Shape>> = input
+    .split("\n")
+    .map(::parseFirstStratLine)
+
+/**
+ * Second strategy
+ */
+
+fun calculateSecondStratTotalScore(input: String): Int = parseSecondStratInput(input)
+    .fold(0) { acc, pair -> acc + calculateSecondStratTotalRoundScore(pair.first, pair.second) }
+
+fun calculateSecondStratTotalRoundScore(opponent: Shape, result: Int): Int {
+    val playerShape: Shape = when (opponent) {
+        Shape.Rock -> when {
+            result > 0 -> Shape.Paper
+            result < 0 -> Shape.Scissors
+            else -> Shape.Rock
+        }
+
+        Shape.Paper -> when {
+            result > 0 -> Shape.Scissors
+            result < 0 -> Shape.Rock
+            else -> Shape.Paper
+        }
+
+        Shape.Scissors -> when {
+            result > 0 -> Shape.Rock
+            result < 0 -> Shape.Paper
+            else -> Shape.Scissors
+        }
+    }
+    return getRoundResultScore(result) + getPlayerShapeScore(playerShape)
+}
+
+fun parseSecondStratLine(line: String): Pair<Shape, Int> = line.split(" ")
+    .let { parts ->
+        require(parts.size == 2)
+        decodeOpponentShape(parts[0]) to decodeRoundResult(parts[1])
+    }
+
+fun parseSecondStratInput(input: String): List<Pair<Shape, Int>> = input
+    .split("\n")
+    .map(::parseSecondStratLine)
+
+
+
+fun calculateRoundResultScore(opponent: Shape, player: Shape): Int = getRoundResultScore(
+    compareShapes(
+        player = player,
+        opponent = opponent
+    )
+)
+
+fun getRoundResultScore(result: Int): Int = when {
+    result > 0 -> SCORE_WIN
+    result < 0 -> SCORE_LOSE
+    else -> SCORE_DRAW
 }
 
 fun compareShapes(player: Shape, opponent: Shape): Int =
@@ -39,6 +97,13 @@ fun compareShapes(player: Shape, opponent: Shape): Int =
         player == Shape.Rock && opponent == Shape.Scissors -> 1
         player == Shape.Scissors && opponent == Shape.Rock -> -1
         else -> (player.ordinal - opponent.ordinal).sign
+    }
+
+fun getPlayerShape(opponent: Shape, result: Int): Shape =
+    when {
+        opponent == Shape.Rock && result.sign == -1 -> Shape.Scissors
+        opponent == Shape.Scissors && result.sign == 1 -> Shape.Rock
+        else -> Shape.values()[opponent.ordinal + result.sign]
     }
 
 fun getPlayerShapeScore(shape: Shape): Int = when (shape) {
@@ -61,13 +126,10 @@ fun decodePlayerShape(string: String): Shape = when (string) {
     else -> throw IllegalArgumentException("Illegal line for decoding player shape")
 }
 
-fun parseLine(line: String): Pair<Shape, Shape> = line.split(" ")
-    .let { parts ->
-        require(parts.size == 2)
-        decodeOpponentShape(parts[0]) to decodePlayerShape(parts[1])
-    }
+fun decodeRoundResult(string: String): Int = when (string) {
+    "X" -> -1
+    "Y" -> 0
+    "Z" -> 1
+    else -> throw IllegalArgumentException("Illegal line for decoding round result")
+}
 
-
-fun parseInput(input: String): List<Pair<Shape, Shape>> = input
-    .split("\n")
-    .map(::parseLine)
