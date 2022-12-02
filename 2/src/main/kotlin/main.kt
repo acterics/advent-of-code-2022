@@ -45,25 +45,7 @@ fun calculateSecondStratTotalScore(input: String): Int = parseSecondStratInput(i
     .fold(0) { acc, pair -> acc + calculateSecondStratTotalRoundScore(pair.first, pair.second) }
 
 fun calculateSecondStratTotalRoundScore(opponent: Shape, result: Int): Int {
-    val playerShape: Shape = when (opponent) {
-        Shape.Rock -> when {
-            result > 0 -> Shape.Paper
-            result < 0 -> Shape.Scissors
-            else -> Shape.Rock
-        }
-
-        Shape.Paper -> when {
-            result > 0 -> Shape.Scissors
-            result < 0 -> Shape.Rock
-            else -> Shape.Paper
-        }
-
-        Shape.Scissors -> when {
-            result > 0 -> Shape.Rock
-            result < 0 -> Shape.Paper
-            else -> Shape.Scissors
-        }
-    }
+    val playerShape: Shape = getPlayerShape(opponent, result)
     return getRoundResultScore(result) + getPlayerShapeScore(playerShape)
 }
 
