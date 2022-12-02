@@ -26,5 +26,8 @@ dependencyResolutionManagement {
     }
 }
 
-include(":first-task")
-project(":first-task").projectDir = File("./1")
+include(":first-day")
+project(":first-day").projectDir = File("./1")
+
+include(":second-day")
+project(":second-day").projectDir = File("./2")
