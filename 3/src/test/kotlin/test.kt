@@ -1,4 +1,4 @@
-package ua.olehlypskyi.adventofcode.thrid
+package ua.olehlypskyi.adventofcode.third
 
 import org.junit.Test
 import java.io.File
@@ -6,6 +6,14 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 class ThirdDayTests {
+
+    @Test
+    fun testCalculateElvesGroupsBadgePrioritySum() {
+        val inputFile = File("./test-input.txt")
+        val expectedSum = 70
+        val actualSum = calculateElvesGroupsBadgePrioritySum(inputFile.readText())
+        assertEquals(expectedSum, actualSum)
+    }
 
     @Test
     fun testCalculateCommonItemsPrioritySum() {
@@ -32,12 +40,47 @@ class ThirdDayTests {
     }
 
     @Test
+    fun testFindElvesGroupBadge() {
+        val group = listOf(
+            "vJrwpWtwJgWrhcsFMMfFFhFp",
+            "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+            "PmmdzqPrVvPwwTWBwg",
+        )
+        val expectedBadge = 'r'
+        val actualBadge = findElvesGroupBadge(group)
+        assertEquals(expectedBadge, actualBadge)
+    }
+
+    @Test
     fun testSplitToCompartments() {
         val rawItems = "vJrwpWtwJgWrhcsFMMfFFhFp"
         val expectedCompartmentItems = "vJrwpWtwJgWr" to "hcsFMMfFFhFp"
         val actualCompartmentItems = splitToCompartments(rawItems)
 
         assertEquals(expectedCompartmentItems, actualCompartmentItems)
+    }
+
+    @Test
+    fun testSplitToElvesGroups() {
+        val inputFile = File("./test-input.txt")
+        val items = parseInput(inputFile.readText())
+        val expectedGroups = listOf(
+            listOf(
+                "vJrwpWtwJgWrhcsFMMfFFhFp",
+                "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+                "PmmdzqPrVvPwwTWBwg",
+            ),
+            listOf(
+                "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+                "ttgJtRGJQctTZtZT",
+                "CrZsJsPPZsGzwwsLwLmpwMDw",
+            )
+        )
+        val actualGroups = splitToElvesGroups(items)
+        assertContentEquals(
+            expectedGroups,
+            actualGroups
+        )
     }
 
     @Test
