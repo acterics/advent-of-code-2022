@@ -46,7 +46,7 @@ fun calculateSecondStratTotalScore(input: String): Int = parseSecondStratInput(i
 
 fun calculateSecondStratTotalRoundScore(opponent: Shape, result: Int): Int {
     val playerShape: Shape = getPlayerShape(opponent, result)
-    return getRoundResultScore(result) + getPlayerShapeScore(playerShape)
+    return getRoundResultScore(result) +     getPlayerShapeScore(playerShape)
 }
 
 fun parseSecondStratLine(line: String): Pair<Shape, Int> = line.split(" ")
