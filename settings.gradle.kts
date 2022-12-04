@@ -34,3 +34,6 @@ project(":second-day").projectDir = File("./2")
 
 include(":third-day")
 project(":third-day").projectDir = File("./3")
+
+include(":fourth-day")
+project(":fourth-day").projectDir = File("./4")
