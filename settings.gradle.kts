@@ -52,3 +52,6 @@ project(":eighth-day").projectDir = File("./8")
 
 include(":ninth-day")
 project(":ninth-day").projectDir = File("./9")
+
+include(":tenth-day")
+project(":tenth-day").projectDir = File("./10")
